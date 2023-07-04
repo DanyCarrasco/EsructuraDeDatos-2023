@@ -268,7 +268,7 @@ public class GrafoNoEtiq {
         return exito;
     }
 
-    public boolean esVacio(){
+    public boolean esVacio() {
         // Devuelve falso si hay al menos un vértice cargado en el grafo y verdadero en caso contrario.
         return this.inicio != null;
     }
@@ -296,24 +296,24 @@ public class GrafoNoEtiq {
         return salida;
     }
 
-    private void caminoMasCortoAux(NodoVert n, Object dest, Lista salida){
-    //Busca el camino mas corto en la lista de adyacentes del nodo n hacia el vertice dest
+    private void caminoMasCortoAux(NodoVert n, Object dest, Lista salida) {
+        //Busca el camino mas corto en la lista de adyacentes del nodo n hacia el vertice dest
         Lista visitados = new Lista();
         NodoAdy nAdyacente = n.getPrimerAdy();
         boolean exito = false;
-            while (nAdyacente != null){
-                exito = existeCaminoAux(n, dest, visitados);
-                if(exito){
-                    if(salida.longitud() == 0){
+        while (nAdyacente != null) {
+            exito = existeCaminoAux(n, dest, visitados);
+            if (exito) {
+                if (salida.longitud() == 0) {
+                    salida = visitados;
+                } else {
+                    if (visitados.longitud() < salida.longitud()) {
                         salida = visitados;
-                    }else {
-                        if(visitados.longitud() < salida.longitud()){
-                            salida = visitados;
-                        }
                     }
                 }
-                nAdyacente = nAdyacente.getSigAdyacente();
             }
+            nAdyacente = nAdyacente.getSigAdyacente();
+        }
     }
 
     public Lista caminoMasLargo(Object origen, Object destino) {
@@ -339,29 +339,29 @@ public class GrafoNoEtiq {
         return salida;
     }
 
-    private void caminoMasLargoAux(NodoVert n, Object dest, Lista salida){
-    //Busca el camino mas largo en la lista de adyacentes del nodo n hacia el vertice dest
+    private void caminoMasLargoAux(NodoVert n, Object dest, Lista salida) {
+        //Busca el camino mas largo en la lista de adyacentes del nodo n hacia el vertice dest
         Lista visitados = new Lista();
         NodoAdy nAdyacente = n.getPrimerAdy();
         boolean exito = false;
-            while (nAdyacente != null){
-                exito = existeCaminoAux(n, dest, visitados);
-                if(exito){
-                    if(salida.longitud() < visitados.longitud()){
-                        salida = visitados;
-                    }
+        while (nAdyacente != null) {
+            exito = existeCaminoAux(n, dest, visitados);
+            if (exito) {
+                if (salida.longitud() < visitados.longitud()) {
+                    salida = visitados;
                 }
-                nAdyacente = nAdyacente.getSigAdyacente();
             }
+            nAdyacente = nAdyacente.getSigAdyacente();
+        }
     }
 
-    public Lista listarEnAnchura(){
+    public Lista listarEnAnchura() {
         /* Devuelve una lista con los vértices del grafo visitados según el recorrido en anchura explicado en
         la sección anterior.*/
         Lista visitados = new Lista();
         NodoVert u = this.inicio;
-        while (u != null){
-            if (visitados.localizar(u.getElem()) < 0){
+        while (u != null) {
+            if (visitados.localizar(u.getElem()) < 0) {
                 AnchuraDesde(u, visitados);
             }
             u = u.getSigVertice();
@@ -369,22 +369,66 @@ public class GrafoNoEtiq {
         return visitados;
     }
 
-    private void AnchuraDesde (NodoVert v, Lista visitados){
+    private void AnchuraDesde(NodoVert v, Lista visitados) {
         Cola q = new Cola();
-        visitados.insertar(v, visitados.longitud()+1);
+        visitados.insertar(v, visitados.longitud() + 1);
         q.poner(v);
-        while (!q.esVacia()){
+        while (!q.esVacia()) {
             NodoVert u = (NodoVert) q.obtenerFrente();
             q.sacar();
             NodoAdy vAdyacente = u.getPrimerAdy();
-            while (vAdyacente != null){
+            while (vAdyacente != null) {
                 v = vAdyacente.getVertice();
-                if (visitados.localizar(v) < 0){
+                if (visitados.localizar(v) < 0) {
                     visitados.insertar(v, visitados.longitud() + 1);
                     q.poner(v);
                 }
                 vAdyacente = vAdyacente.getSigAdyacente();
             }
         }
+    }
+
+    public GrafoNoEtiq clone() {
+        // Genera y devuelve un grafo que es equivalente (igual estructura y contenido de los nodos) al original.
+        GrafoNoEtiq clon = new GrafoNoEtiq();
+        clon.inicio = cloneAux(this.inicio);
+        cloneAdy(clon.inicio, this.inicio, clon.inicio);
+        return clon;
+    }
+
+    private NodoVert cloneAux(NodoVert n){
+        //Clona la lista de vertices del grafo original
+        NodoVert nuevo = null;
+        if (n != null) {
+            nuevo = new NodoVert(n.getElem(),cloneAux(n.getSigVertice()));
+        }
+        return nuevo;
+    }
+
+    private void cloneAdy (NodoVert nClon, NodoVert n, NodoVert clonInicio){
+        //Clona la lista de adyacentes de cada nodo del grafo clon
+        if (nClon != null) {
+            nClon.setPrimerAdy(cloneAdyAux(nClon, n.getPrimerAdy(), clonInicio));
+            cloneAdy(nClon.getSigVertice(), n.getSigVertice(), clonInicio);
+        }
+    }
+
+    private NodoAdy cloneAdyAux(NodoVert nOrigen, NodoAdy nAdy, NodoVert clonInicio){
+        //Clona cada adyacente del grafo original en el grafo clon
+        NodoAdy nuevo = null;
+        if (nOrigen != null) {
+            NodoVert aux = clonInicio;
+            NodoVert nDestino = null;
+            while (nDestino == null && aux != null){
+                 if (nAdy.getVertice().getElem().equals(aux.getElem())){
+                     nDestino = aux;
+                 }
+                 aux = aux.getSigVertice();
+            }
+            if (nDestino != null) {
+                nuevo = new NodoAdy(nDestino, cloneAdyAux(nOrigen, nAdy.getSigAdyacente(), clonInicio));
+            }
+        }
+        return nuevo;
     }
 }
