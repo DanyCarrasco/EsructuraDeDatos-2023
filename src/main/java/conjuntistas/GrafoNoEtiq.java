@@ -1,5 +1,6 @@
 package conjuntistas;
 
+import lineales.dinamicas.Cola;
 import lineales.dinamicas.Lista;
 
 public class GrafoNoEtiq {
@@ -354,4 +355,36 @@ public class GrafoNoEtiq {
             }
     }
 
+    public Lista listarEnAnchura(){
+        /* Devuelve una lista con los vértices del grafo visitados según el recorrido en anchura explicado en
+        la sección anterior.*/
+        Lista visitados = new Lista();
+        NodoVert u = this.inicio;
+        while (u != null){
+            if (visitados.localizar(u.getElem()) < 0){
+                AnchuraDesde(u, visitados);
+            }
+            u = u.getSigVertice();
+        }
+        return visitados;
+    }
+
+    private void AnchuraDesde (NodoVert v, Lista visitados){
+        Cola q = new Cola();
+        visitados.insertar(v, visitados.longitud()+1);
+        q.poner(v);
+        while (!q.esVacia()){
+            NodoVert u = (NodoVert) q.obtenerFrente();
+            q.sacar();
+            NodoAdy vAdyacente = u.getPrimerAdy();
+            while (vAdyacente != null){
+                v = vAdyacente.getVertice();
+                if (visitados.localizar(v) < 0){
+                    visitados.insertar(v, visitados.longitud() + 1);
+                    q.poner(v);
+                }
+                vAdyacente = vAdyacente.getSigAdyacente();
+            }
+        }
+    }
 }
