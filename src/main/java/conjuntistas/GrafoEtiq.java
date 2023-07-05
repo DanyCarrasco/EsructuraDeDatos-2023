@@ -3,16 +3,16 @@ package conjuntistas;
 import lineales.dinamicas.Cola;
 import lineales.dinamicas.Lista;
 
-public class GrafoNoEtiq {
-    private NodoVert inicio;
+public class GrafoEtiq {
+    private NodoVertEtiq inicio;
 
-    public GrafoNoEtiq() {
+    public GrafoEtiq() {
         this.inicio = null;
     }
 
-    private NodoVert ubicarVertice(Object buscado) {
+    private NodoVertEtiq ubicarVertice(Object buscado) {
         //Busca hasta encontrar el vertice buscado en la lista de vertice
-        NodoVert aux = this.inicio;
+        NodoVertEtiq aux = this.inicio;
         while (aux != null && !aux.getElem().equals(buscado)) {
             aux = aux.getSigVertice();
         }
@@ -23,9 +23,9 @@ public class GrafoNoEtiq {
         /* Dado un elemento de TipoVertice se lo agrega a la estructura controlando que no se inserten
         vértices repetidos. Si puede realizar la inserción devuelve verdadero, en caso contrario devuelve falso.*/
         boolean exito = false;
-        NodoVert aux = this.ubicarVertice(nuevoVertice);
+        NodoVertEtiq aux = this.ubicarVertice(nuevoVertice);
         if (aux == null) {
-            this.inicio = new NodoVert(nuevoVertice, this.inicio);
+            this.inicio = new NodoVertEtiq(nuevoVertice, this.inicio);
             exito = true;
         }
         return exito;
@@ -36,8 +36,8 @@ public class GrafoNoEtiq {
         ambos vértices. Si el arco existe y se puede realizar la eliminación con éxito devuelve verdadero, en
         caso contrario devuelve falso.*/
         boolean exito = false;
-        NodoVert aux = this.inicio;
-        NodoVert auxAnterior = null;
+        NodoVertEtiq aux = this.inicio;
+        NodoVertEtiq auxAnterior = null;
         while (!exito && aux != null) {
             if (aux.getElem().equals(vertice)) {
                 eliminarArcos(aux);
@@ -56,7 +56,7 @@ public class GrafoNoEtiq {
         return exito;
     }
 
-    private boolean eliminarVerticeAux(NodoVert nVertice, NodoVert nVerticeAnterior, Object verticeBuscado) {
+    private boolean eliminarVerticeAux(NodoVertEtiq nVertice, NodoVertEtiq nVerticeAnterior, Object verticeBuscado) {
         //Metodo recursivo para moverme en la lista de vertice hasta encontrar el verticeBuscado para eliminar
         boolean exito = false;
         if (nVertice != null) {
@@ -75,9 +75,9 @@ public class GrafoNoEtiq {
         return exito;
     }
 
-    private void eliminarArcos(NodoVert n) {
+    private void eliminarArcos(NodoVertEtiq n) {
         //Modulo para eliminar los arcos del nodo "n"
-        NodoAdy nAdyacente = n.getPrimerAdy();
+        NodoAdyEtiq nAdyacente = n.getPrimerAdy();
         while (nAdyacente != null) {
             eliminarUnArco(nAdyacente.getVertice(), n.getElem());
             n.setPrimerAdy(nAdyacente.getSigAdyacente());
@@ -85,7 +85,7 @@ public class GrafoNoEtiq {
         }
     }
 
-    private boolean eliminarUnArco(NodoVert n, Object buscado) {
+    private boolean eliminarUnArco(NodoVertEtiq n, Object buscado) {
         //Confirma la eliminacion del nodo adyacente "buscado" de la lista de adyacentes del nodo "n"
         boolean exito = false;
         if (n != null) {
@@ -101,7 +101,7 @@ public class GrafoNoEtiq {
         return exito;
     }
 
-    private boolean eliminarUnArcoAux(NodoAdy n, NodoAdy nAnterior, Object buscado) {
+    private boolean eliminarUnArcoAux(NodoAdyEtiq n, NodoAdyEtiq nAnterior, Object buscado) {
         //Modulo recursivo para moverse en la lista de adyacentes del nodo "n" hasta encontrar
         // y confirmar la eliminacion el nodo "buscado"
         boolean exito = false;
@@ -116,15 +116,15 @@ public class GrafoNoEtiq {
         return exito;
     }
 
-    public boolean insertarArco(Object origen, Object destino) {
+    public boolean insertarArco(Object origen, Object destino, Object etiqueta) {
         /* Dados dos elementos de TipoVertice (origen y destino) agrega el arco en la estructura, sólo si
         ambos vértices ya existen en el grafo. Si puede realizar la inserción devuelve verdadero, en caso
         contrario devuelve falso.*/
         //Forma mas eficiente
         boolean exito = false;
-        NodoVert aux = this.inicio;
-        NodoVert nOrigen = null;
-        NodoVert nDestino = null;
+        NodoVertEtiq aux = this.inicio;
+        NodoVertEtiq nOrigen = null;
+        NodoVertEtiq nDestino = null;
         while (((nOrigen == null) || (nDestino == null)) && (aux != null)) {
             if (aux.getElem().equals(origen)) {
                 nOrigen = aux;
@@ -135,52 +135,52 @@ public class GrafoNoEtiq {
             aux = aux.getSigVertice();
         }
         if (nOrigen != null && nDestino != null) {
-            insertarAdyacente(nOrigen, nDestino);
-            insertarAdyacente(nDestino, nOrigen);
+            insertarAdyacente(nOrigen, nDestino, etiqueta);
+            insertarAdyacente(nDestino, nOrigen, etiqueta);
             exito = true;
         }
-        //exito = insertarArcoAux(this.inicio, origen, destino)
+        //exito = insertarArcoAux(this.inicio, origen, destino, etiqueta)
         return exito;
     }
 
-    private boolean insertarArcoAux(NodoVert n, Object origen, Object destino) {
+    private boolean insertarArcoAux(NodoVertEtiq n, Object origen, Object destino, Object etiqueta) {
         //Modulo recursivo que busca hasta encontrar el nodo vertice origen en lista de vertices del grafo
         //No es la mas eficiente porque busca de forma recursiva dos veces para buscar origen y destino
         boolean exito = false;
         if (n != null) {
             if (n.getElem().equals(origen)) {
-                NodoVert nDestino = ubicarVertice(destino);
+                NodoVertEtiq nDestino = ubicarVertice(destino);
                 if (nDestino != null) {
                     //si no es encontrado el nodo vertice destino, termina y retorna false
-                    insertarAdyacente(n, nDestino);
-                    insertarAdyacente(nDestino, n);
+                    insertarAdyacente(n, nDestino, etiqueta);
+                    insertarAdyacente(nDestino, n, etiqueta);
                     exito = true;
                 }
             } else {
-                exito = insertarArcoAux(n.getSigVertice(), origen, destino);
+                exito = insertarArcoAux(n.getSigVertice(), origen, destino, etiqueta);
             }
         }
         return exito;
     }
 
-    private void insertarAdyacente(NodoVert n, NodoVert nEnlace) {
+    private void insertarAdyacente(NodoVertEtiq n, NodoVertEtiq nEnlace, Object etiq) {
         //Inserta el nodo nVertice en la lista de adyacentes del nodo n
         if (n != null) {
             if (n.getPrimerAdy() == null) {
-                n.setPrimerAdy(new NodoAdy(nEnlace, null));
+                n.setPrimerAdy(new NodoAdyEtiq(nEnlace, null, etiq));
             } else {
-                insertarAdyacenteAux(n.getPrimerAdy(), nEnlace);
+                insertarAdyacenteAux(n.getPrimerAdy(), nEnlace, etiq);
             }
         }
     }
 
-    private void insertarAdyacenteAux(NodoAdy nAdyacente, NodoVert nEnlace) {
+    private void insertarAdyacenteAux(NodoAdyEtiq nAdyacente, NodoVertEtiq nEnlace, Object etiq) {
         //Modulo recursivo para insertar el nodo nVertice en la lista de adyacentes del nodo n
         if (nAdyacente != null) {
             if (nAdyacente.getSigAdyacente() == null) {
-                nAdyacente.setSigAdyacente(new NodoAdy(nEnlace, null));
+                nAdyacente.setSigAdyacente(new NodoAdyEtiq(nEnlace, null, etiq));
             } else {
-                insertarAdyacenteAux(nAdyacente.getSigAdyacente(), nEnlace);
+                insertarAdyacenteAux(nAdyacente.getSigAdyacente(), nEnlace, etiq);
             }
         }
     }
@@ -190,9 +190,9 @@ public class GrafoNoEtiq {
         ambos vértices. Si el arco existe y se puede realizar la eliminación con éxito devuelve verdadero, en
         caso contrario devuelve falso.*/
         boolean exito = false;
-        NodoVert aux = this.inicio;
-        NodoVert nOrigen = null;
-        NodoVert nDestino = null;
+        NodoVertEtiq aux = this.inicio;
+        NodoVertEtiq nOrigen = null;
+        NodoVertEtiq nDestino = null;
         while (((nOrigen == null) || (nDestino == null)) && (aux != null)) {
             if (aux.getElem().equals(origen)) {
                 nOrigen = aux;
@@ -223,9 +223,9 @@ public class GrafoNoEtiq {
         return ubicarVerticeAdyacente(ubicarVertice(origen), destino) != null;
     }
 
-    private NodoAdy ubicarVerticeAdyacente(NodoVert n, Object buscado) {
+    private NodoAdyEtiq ubicarVerticeAdyacente(NodoVertEtiq n, Object buscado) {
         //Busca y retorna el nodo vertice buscado en la lista de adyacentes de n
-        NodoAdy aux = null;
+        NodoAdyEtiq aux = null;
         if (n != null) {
             aux = n.getPrimerAdy();
             while (aux != null && !aux.getVertice().getElem().equals(buscado)) {
@@ -238,7 +238,7 @@ public class GrafoNoEtiq {
     public Lista listarEnProfundidad() {
         Lista visitados = new Lista();
         //define un vertice donde comenzar a recorrer
-        NodoVert aux = this.inicio;
+        NodoVertEtiq aux = this.inicio;
         while (aux != null) {
             if (visitados.localizar(aux.getElem()) < 0) {
                 //si el vertice no fue visitados aun, avanza en profundidad
@@ -249,11 +249,11 @@ public class GrafoNoEtiq {
         return visitados;
     }
 
-    private void listarEnProfundidadAux(NodoVert n, Lista vis) {
+    private void listarEnProfundidadAux(NodoVertEtiq n, Lista vis) {
         if (n != null) {
             //marca al vertice n como visitados
             vis.insertar(n.getElem(), vis.longitud() + 1);
-            NodoAdy ady = n.getPrimerAdy();
+            NodoAdyEtiq ady = n.getPrimerAdy();
             while (ady != null) {
                 // visita en profundidad los adyacentes de n aun no visitados
                 if (vis.localizar(ady.getVertice().getElem()) < 0) {
@@ -267,9 +267,9 @@ public class GrafoNoEtiq {
     public boolean existeCamino(Object origen, Object destino) {
         boolean exito = false;
         //verifica si ambos vertices existen
-        NodoVert auxO = null;
-        NodoVert auxD = null;
-        NodoVert aux = this.inicio;
+        NodoVertEtiq auxO = null;
+        NodoVertEtiq auxD = null;
+        NodoVertEtiq aux = this.inicio;
         while ((auxO == null || auxD == null) && aux != null) {
             if (aux.getElem().equals(origen)) {
                 auxO = aux;
@@ -287,14 +287,14 @@ public class GrafoNoEtiq {
         return exito;
     }
 
-    private boolean existeCaminoAux(NodoVert n, Object dest, Lista vis) {
+    private boolean existeCaminoAux(NodoVertEtiq n, Object dest, Lista vis) {
         boolean exito = false;
         if (n != null) {
             exito = true;
         } else {
             //si no es el destino verifica si hay camino entre n y destino
             vis.insertar(n.getElem(), vis.longitud() + 1);
-            NodoAdy ady = n.getPrimerAdy();
+            NodoAdyEtiq ady = n.getPrimerAdy();
             while (!exito && ady != null) {
                 if (vis.localizar(ady.getVertice().getElem()) < 0) {
                     exito = existeCaminoAux(ady.getVertice(), dest, vis);
@@ -314,9 +314,9 @@ public class GrafoNoEtiq {
         Lista salida = new Lista();
         boolean exito = false;
         //verifica si ambos vertices existen
-        NodoVert auxO = null;
-        NodoVert auxD = null;
-        NodoVert aux = this.inicio;
+        NodoVertEtiq auxO = null;
+        NodoVertEtiq auxD = null;
+        NodoVertEtiq aux = this.inicio;
         while ((auxO == null || auxD == null) && aux != null) {
             if (aux.getElem().equals(origen)) {
                 auxO = aux;
@@ -333,10 +333,10 @@ public class GrafoNoEtiq {
         return salida;
     }
 
-    private void caminoMasCortoAux(NodoVert n, Object dest, Lista salida) {
+    private void caminoMasCortoAux(NodoVertEtiq n, Object dest, Lista salida) {
         //Busca el camino mas corto en la lista de adyacentes del nodo n hacia el vertice dest
         Lista visitados = new Lista();
-        NodoAdy nAdyacente = n.getPrimerAdy();
+        NodoAdyEtiq nAdyacente = n.getPrimerAdy();
         boolean exito = false;
         while (nAdyacente != null) {
             exito = existeCaminoAux(n, dest, visitados);
@@ -357,9 +357,9 @@ public class GrafoNoEtiq {
         Lista salida = new Lista();
         boolean exito = false;
         //verifica si ambos vertices existen
-        NodoVert auxO = null;
-        NodoVert auxD = null;
-        NodoVert aux = this.inicio;
+        NodoVertEtiq auxO = null;
+        NodoVertEtiq auxD = null;
+        NodoVertEtiq aux = this.inicio;
         while ((auxO == null || auxD == null) && aux != null) {
             if (aux.getElem().equals(origen)) {
                 auxO = aux;
@@ -376,10 +376,10 @@ public class GrafoNoEtiq {
         return salida;
     }
 
-    private void caminoMasLargoAux(NodoVert n, Object dest, Lista salida) {
+    private void caminoMasLargoAux(NodoVertEtiq n, Object dest, Lista salida) {
         //Busca el camino mas largo en la lista de adyacentes del nodo n hacia el vertice dest
         Lista visitados = new Lista();
-        NodoAdy nAdyacente = n.getPrimerAdy();
+        NodoAdyEtiq nAdyacente = n.getPrimerAdy();
         boolean exito = false;
         while (nAdyacente != null) {
             exito = existeCaminoAux(n, dest, visitados);
@@ -396,7 +396,7 @@ public class GrafoNoEtiq {
         /* Devuelve una lista con los vértices del grafo visitados según el recorrido en anchura explicado en
         la sección anterior.*/
         Lista visitados = new Lista();
-        NodoVert u = this.inicio;
+        NodoVertEtiq u = this.inicio;
         while (u != null) {
             if (visitados.localizar(u.getElem()) < 0) {
                 AnchuraDesde(u, visitados);
@@ -406,14 +406,14 @@ public class GrafoNoEtiq {
         return visitados;
     }
 
-    private void AnchuraDesde(NodoVert v, Lista visitados) {
+    private void AnchuraDesde(NodoVertEtiq v, Lista visitados) {
         Cola q = new Cola();
         visitados.insertar(v, visitados.longitud() + 1);
         q.poner(v);
         while (!q.esVacia()) {
-            NodoVert u = (NodoVert) q.obtenerFrente();
+            NodoVertEtiq u = (NodoVertEtiq) q.obtenerFrente();
             q.sacar();
-            NodoAdy vAdyacente = u.getPrimerAdy();
+            NodoAdyEtiq vAdyacente = u.getPrimerAdy();
             while (vAdyacente != null) {
                 v = vAdyacente.getVertice();
                 if (visitados.localizar(v) < 0) {
@@ -425,24 +425,24 @@ public class GrafoNoEtiq {
         }
     }
 
-    public GrafoNoEtiq clone() {
+    public GrafoEtiq clone() {
         // Genera y devuelve un grafo que es equivalente (igual estructura y contenido de los nodos) al original.
-        GrafoNoEtiq clon = new GrafoNoEtiq();
+        GrafoEtiq clon = new GrafoEtiq();
         clon.inicio = cloneAux(this.inicio);
         cloneAdy(clon.inicio, this.inicio, clon.inicio);
         return clon;
     }
 
-    private NodoVert cloneAux(NodoVert n) {
+    private NodoVertEtiq cloneAux(NodoVertEtiq n) {
         //Clona la lista de vertices del grafo original
-        NodoVert nuevo = null;
+        NodoVertEtiq nuevo = null;
         if (n != null) {
-            nuevo = new NodoVert(n.getElem(), cloneAux(n.getSigVertice()));
+            nuevo = new NodoVertEtiq(n.getElem(), cloneAux(n.getSigVertice()));
         }
         return nuevo;
     }
 
-    private void cloneAdy(NodoVert nClon, NodoVert n, NodoVert clonInicio) {
+    private void cloneAdy(NodoVertEtiq nClon, NodoVertEtiq n, NodoVertEtiq clonInicio) {
         //Clona la lista de adyacentes de cada nodo del grafo clon
         if (nClon != null) {
             nClon.setPrimerAdy(cloneAdyAux(nClon, n.getPrimerAdy(), clonInicio));
@@ -450,16 +450,17 @@ public class GrafoNoEtiq {
         }
     }
 
-    private NodoAdy cloneAdyAux(NodoVert nOrigen, NodoAdy nAdy, NodoVert clonInicio) {
+    private NodoAdyEtiq cloneAdyAux(NodoVertEtiq nOrigen, NodoAdyEtiq nAdy, NodoVertEtiq clonInicio) {
         //Clona cada adyacente del grafo original en el grafo clon
-        NodoAdy nuevo = null;
+        NodoAdyEtiq nuevo = null;
         if (nOrigen != null) {
-            NodoVert aux = clonInicio;
-            while (nAdy.getVertice().getElem().equals(aux.getElem())&& aux != null) {
+            NodoVertEtiq aux = clonInicio;
+            Object etiq = null;
+            while (!nAdy.getVertice().getElem().equals(aux.getElem()) && aux != null) {
                 aux = aux.getSigVertice();
             }
             if (aux != null) {
-                nuevo = new NodoAdy(aux, cloneAdyAux(nOrigen, nAdy.getSigAdyacente(), clonInicio));
+                nuevo = new NodoAdyEtiq(aux, cloneAdyAux(nOrigen, nAdy.getSigAdyacente(), clonInicio), nAdy.getEtiqueta());
             }
         }
         return nuevo;
@@ -471,20 +472,20 @@ public class GrafoNoEtiq {
         return toStringAux(this.inicio);
     }
 
-    private String toStringAux(NodoVert n) {
+    private String toStringAux(NodoVertEtiq n) {
         //Modulo recursivo: crea una cadena y registra el nodo con sus nodos adyacentes
         String cad = "";
         if (n != null) {
-            NodoAdy nAdy = n.getPrimerAdy();
+            NodoAdyEtiq nAdy = n.getPrimerAdy();
             String cadAdyacentes = "";
             if (nAdy == null) {
                 cadAdyacentes = "-";
             } else {
                 while (nAdy != null) {
-                    cadAdyacentes = cadAdyacentes + nAdy.getVertice().getElem().toString();
+                    cadAdyacentes = cadAdyacentes + nAdy.getVertice().getElem().toString()+", etiqueta: "+ nAdy.getEtiqueta().toString();
                     nAdy = nAdy.getSigAdyacente();
                     if (nAdy != null) {
-                        cadAdyacentes = cadAdyacentes + ",";
+                        cadAdyacentes = cadAdyacentes + ";";
                     }
                 }
             }
