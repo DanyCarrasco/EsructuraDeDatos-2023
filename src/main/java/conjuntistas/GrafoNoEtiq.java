@@ -11,6 +11,7 @@ public class GrafoNoEtiq {
     }
 
     private NodoVert ubicarVertice(Object buscado) {
+        //Busca hasta encontrar el vertice buscado en la lista de vertice
         NodoVert aux = this.inicio;
         while (aux != null && !aux.getElem().equals(buscado)) {
             aux = aux.getSigVertice();
@@ -19,6 +20,8 @@ public class GrafoNoEtiq {
     }
 
     public boolean insertarVertice(Object nuevoVertice) {
+        /* Dado un elemento de TipoVertice se lo agrega a la estructura controlando que no se inserten
+        vértices repetidos. Si puede realizar la inserción devuelve verdadero, en caso contrario devuelve falso.*/
         boolean exito = false;
         NodoVert aux = this.ubicarVertice(nuevoVertice);
         if (aux == null) {
@@ -29,7 +32,28 @@ public class GrafoNoEtiq {
     }
 
     public boolean eliminarVertice(Object vertice) {
-        return eliminarVerticeAux(this.inicio, null, vertice);
+        /* Dados dos elementos de TipoVertice (origen y destino) se quita de la estructura el arco que une
+        ambos vértices. Si el arco existe y se puede realizar la eliminación con éxito devuelve verdadero, en
+        caso contrario devuelve falso.*/
+        boolean exito = false;
+        NodoVert aux = this.inicio;
+        NodoVert auxAnterior = null;
+        while (!exito && aux != null) {
+            if (aux.getElem().equals(vertice)) {
+                eliminarArcos(aux);
+                if (auxAnterior == null) {
+                    this.inicio = aux.getSigVertice();
+                } else {
+                    auxAnterior.setSigVertice(aux.getSigVertice());
+                }
+                exito = true;
+            }
+            auxAnterior = aux;
+            aux = aux.getSigVertice();
+        }
+        /*Se puede usar tambien el modulo recursivo eliminarVerticeAux y comentar todo desde NodoVert aux = this.inicio*/
+        //exito = eliminarVerticeAux(this.inicio, null, vertice);
+        return exito;
     }
 
     private boolean eliminarVerticeAux(NodoVert nVertice, NodoVert nVerticeAnterior, Object verticeBuscado) {
@@ -96,16 +120,36 @@ public class GrafoNoEtiq {
         /* Dados dos elementos de TipoVertice (origen y destino) agrega el arco en la estructura, sólo si
         ambos vértices ya existen en el grafo. Si puede realizar la inserción devuelve verdadero, en caso
         contrario devuelve falso.*/
-        return insertarArcoAux(this.inicio, origen, destino);
+        //Forma mas eficiente
+        boolean exito = false;
+        NodoVert aux = this.inicio;
+        NodoVert nOrigen = null;
+        NodoVert nDestino = null;
+        while (((nOrigen == null) || (nDestino == null)) && (aux != null)){
+            if (aux.getElem().equals(origen)){
+                nOrigen = aux;
+            }
+            if(aux.getElem().equals(destino)){
+                nDestino = aux;
+            }
+            aux = aux.getSigVertice();
+        }
+        if (nOrigen != null && nDestino != null) {
+            insertarAdyacente(nOrigen, nDestino);
+            insertarAdyacente(nDestino, nOrigen);
+            exito = true;
+        }
+        //exito = insertarArcoAux(this.inicio, origen, destino)
+        return exito;
     }
 
     private boolean insertarArcoAux(NodoVert n, Object origen, Object destino) {
         //Modulo recursivo que busca hasta encontrar el nodo vertice origen en lista de vertices del grafo
+        //No es la mas eficiente porque busca de forma recursiva dos veces para buscar origen y destino
         boolean exito = false;
         if (n != null) {
-            NodoVert nDestino = null;
             if (n.getElem().equals(origen)) {
-                nDestino = buscarVerticeEnLista(this.inicio, destino);
+                NodoVert nDestino = ubicarVertice(destino);
                 if (nDestino != null) {
                     //si no es encontrado el nodo vertice destino, termina y retorna false
                     insertarAdyacente(n, nDestino);
@@ -117,20 +161,6 @@ public class GrafoNoEtiq {
             }
         }
         return exito;
-    }
-
-    private NodoVert buscarVerticeEnLista(NodoVert n, Object buscado) {
-        //Modulo recursivo para buscar y retornar el nodo buscado en la lista de vertices de grafo
-        //Si no lo encuentra retorna null
-        NodoVert nBuscado = null;
-        if (n != null) {
-            if (n.getElem().equals(buscado)) {
-                nBuscado = n;
-            } else {
-                nBuscado = buscarVerticeEnLista(n.getSigVertice(), buscado);
-            }
-        }
-        return nBuscado;
     }
 
     private void insertarAdyacente(NodoVert n, NodoVert nEnlace) {
@@ -160,13 +190,22 @@ public class GrafoNoEtiq {
         ambos vértices. Si el arco existe y se puede realizar la eliminación con éxito devuelve verdadero, en
         caso contrario devuelve falso.*/
         boolean exito = false;
-        if (inicio != null) {
-            NodoVert nOrigen = buscarVerticeEnLista(this.inicio, origen);
-            if (nOrigen != null) {
-                exito = eliminarUnArco(nOrigen, destino);
-                if (exito) {
-                    exito = eliminarUnArco(buscarVerticeEnLista(this.inicio, destino), origen);
-                }
+        NodoVert aux = this.inicio;
+        NodoVert nOrigen = null;
+        NodoVert nDestino = null;
+        while (((nOrigen == null) || (nDestino == null)) && (aux != null)){
+            if (aux.getElem().equals(origen)){
+                nOrigen = aux;
+            }
+            if(aux.getElem().equals(destino)){
+                nDestino = aux;
+            }
+            aux = aux.getSigVertice();
+        }
+        if (nOrigen != null && nDestino != null) {
+            exito = eliminarUnArco(nOrigen, destino);
+            if (exito) {
+                exito = eliminarUnArco(nDestino, origen);
             }
         }
         return exito;
@@ -174,28 +213,25 @@ public class GrafoNoEtiq {
 
     public boolean existeVertice(Object vertice) {
         // Dado un elemento, devuelve verdadero si está en la estructura y falso en caso contrario.
-        return buscarVerticeEnLista(this.inicio, vertice) != null;
+        return ubicarVertice(vertice) != null;
     }
 
     public boolean existeArco(Object origen, Object destino) {
         /* Dados dos elementos de TipoVertice (origen y destino), devuelve verdadero si existe un arco en
         la estructura que los une y falso en caso contrario.*/
-        return buscarVerticeEnAdyacente(buscarVerticeEnLista(this.inicio, origen), destino) != null;
+        return ubicarVerticeAdyacente(ubicarVertice(origen), destino) != null;
     }
 
-    private NodoVert buscarVerticeEnAdyacente(NodoVert n, Object buscado) {
+    private NodoAdy ubicarVerticeAdyacente(NodoVert n, Object buscado) {
         //Busca y retorna el nodo vertice buscado en la lista de adyacentes de n
-        NodoVert nBuscado = null;
+        NodoAdy aux = null;
         if (n != null) {
-            NodoAdy aux = n.getPrimerAdy();
-            while (nBuscado == null && aux != null) {
-                if (aux.getVertice().getElem().equals(buscado)) {
-                    nBuscado = aux.getVertice();
-                }
+            aux = n.getPrimerAdy();
+            while (aux != null && !aux.getVertice().getElem().equals(buscado)) {
                 aux = aux.getSigAdyacente();
             }
         }
-        return nBuscado;
+        return aux;
     }
 
     public Lista listarEnProfundidad() {
