@@ -396,16 +396,16 @@ public class GrafoNoEtiq {
         return clon;
     }
 
-    private NodoVert cloneAux(NodoVert n){
+    private NodoVert cloneAux(NodoVert n) {
         //Clona la lista de vertices del grafo original
         NodoVert nuevo = null;
         if (n != null) {
-            nuevo = new NodoVert(n.getElem(),cloneAux(n.getSigVertice()));
+            nuevo = new NodoVert(n.getElem(), cloneAux(n.getSigVertice()));
         }
         return nuevo;
     }
 
-    private void cloneAdy (NodoVert nClon, NodoVert n, NodoVert clonInicio){
+    private void cloneAdy(NodoVert nClon, NodoVert n, NodoVert clonInicio) {
         //Clona la lista de adyacentes de cada nodo del grafo clon
         if (nClon != null) {
             nClon.setPrimerAdy(cloneAdyAux(nClon, n.getPrimerAdy(), clonInicio));
@@ -413,22 +413,50 @@ public class GrafoNoEtiq {
         }
     }
 
-    private NodoAdy cloneAdyAux(NodoVert nOrigen, NodoAdy nAdy, NodoVert clonInicio){
+    private NodoAdy cloneAdyAux(NodoVert nOrigen, NodoAdy nAdy, NodoVert clonInicio) {
         //Clona cada adyacente del grafo original en el grafo clon
         NodoAdy nuevo = null;
         if (nOrigen != null) {
             NodoVert aux = clonInicio;
             NodoVert nDestino = null;
-            while (nDestino == null && aux != null){
-                 if (nAdy.getVertice().getElem().equals(aux.getElem())){
-                     nDestino = aux;
-                 }
-                 aux = aux.getSigVertice();
+            while (nDestino == null && aux != null) {
+                if (nAdy.getVertice().getElem().equals(aux.getElem())) {
+                    nDestino = aux;
+                }
+                aux = aux.getSigVertice();
             }
             if (nDestino != null) {
                 nuevo = new NodoAdy(nDestino, cloneAdyAux(nOrigen, nAdy.getSigAdyacente(), clonInicio));
             }
         }
         return nuevo;
+    }
+
+    public String toString() {
+        // Con fines de debugging, este método genera y devuelve una cadena String que muestra los
+        //vértices almacenados en el grafo y qué adyacentes tiene cada uno de ellos.
+        return toStringAux(this.inicio);
+    }
+
+    private String toStringAux(NodoVert n) {
+        String cad = "";
+        if (n != null) {
+            NodoAdy nAdy = n.getPrimerAdy();
+            String cadAdyacentes = "";
+            if (nAdy == null) {
+                cadAdyacentes = "-";
+            } else {
+                while (nAdy != null) {
+                    cadAdyacentes = cadAdyacentes + nAdy.getVertice().getElem().toString();
+                    nAdy = nAdy.getSigAdyacente();
+                    if (nAdy != null) {
+                        cadAdyacentes = cadAdyacentes + ",";
+                    }
+                }
+            }
+            cad = "Nodo: " + n.getElem() + ", nodos adyacentes: " + cadAdyacentes + "\n";
+            cad = cad + toStringAux(n.getSigVertice());
+        }
+        return cad;
     }
 }
