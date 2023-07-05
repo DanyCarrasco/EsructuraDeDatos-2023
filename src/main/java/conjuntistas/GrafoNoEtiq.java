@@ -439,6 +439,7 @@ public class GrafoNoEtiq {
     }
 
     private String toStringAux(NodoVert n) {
+        //Modulo recursivo: crea una cadena y registra el nodo con sus nodos adyacentes
         String cad = "";
         if (n != null) {
             NodoAdy nAdy = n.getPrimerAdy();
