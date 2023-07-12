@@ -468,7 +468,11 @@ public class GrafoNoEtiq {
     public String toString() {
         // Con fines de debugging, este método genera y devuelve una cadena String que muestra los
         //vértices almacenados en el grafo y qué adyacentes tiene cada uno de ellos.
-        return toStringAux(this.inicio);
+        String cad = "Grafo vacio";
+        if (inicio != null) {
+            cad = toStringAux(this.inicio);
+        }
+        return cad;
     }
 
     private String toStringAux(NodoVert n) {
