@@ -493,7 +493,7 @@ public class GrafoNoEtiq {
                 }
             }
             cad = "Nodo: " + n.getElem() + ", nodos adyacentes: " + cadAdyacentes + "\n";
-            cad = cad + toStringAux(n.getSigVertice());
+            cad = toStringAux(n.getSigVertice()) + cad;
         }
         return cad;
     }
