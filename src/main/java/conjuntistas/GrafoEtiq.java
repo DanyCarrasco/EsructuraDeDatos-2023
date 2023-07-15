@@ -256,7 +256,7 @@ public class GrafoEtiq {
             NodoAdyEtiq ady = n.getPrimerAdy();
             while (ady != null) {
                 // visita en profundidad los adyacentes de n aun no visitados
-                if (vis.localizar(ady.getVertice().getElem()) < 0) {
+                if (vis.localizar(ady.getVertice().getElem()) < 1) {
                     listarEnProfundidadAux(ady.getVertice(), vis);
                 }
                 ady = ady.getSigAdyacente();
@@ -307,7 +307,7 @@ public class GrafoEtiq {
 
     public boolean esVacio() {
         // Devuelve falso si hay al menos un vértice cargado en el grafo y verdadero en caso contrario.
-        return this.inicio != null;
+        return this.inicio == null;
     }
 
     public Lista caminoMasCorto(Object origen, Object destino) {
@@ -398,7 +398,7 @@ public class GrafoEtiq {
         Lista visitados = new Lista();
         NodoVertEtiq u = this.inicio;
         while (u != null) {
-            if (visitados.localizar(u.getElem()) < 0) {
+            if (visitados.localizar(u.getElem()) < 1) {
                 AnchuraDesde(u, visitados);
             }
             u = u.getSigVertice();

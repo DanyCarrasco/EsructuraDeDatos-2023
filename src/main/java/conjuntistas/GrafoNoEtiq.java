@@ -236,11 +236,13 @@ public class GrafoNoEtiq {
     }
 
     public Lista listarEnProfundidad() {
+        /*Devuelve una lista con los vértices del grafo visitados según el recorrido en profundidad explicado
+        en la sección anterior.*/
         Lista visitados = new Lista();
         //define un vertice donde comenzar a recorrer
         NodoVert aux = this.inicio;
         while (aux != null) {
-            if (visitados.localizar(aux.getElem()) < 0) {
+            if (visitados.localizar(aux.getElem()) < 1) {
                 //si el vertice no fue visitados aun, avanza en profundidad
                 listarEnProfundidadAux(aux, visitados);
             }
@@ -307,7 +309,7 @@ public class GrafoNoEtiq {
 
     public boolean esVacio() {
         // Devuelve falso si hay al menos un vértice cargado en el grafo y verdadero en caso contrario.
-        return this.inicio != null;
+        return this.inicio == null;
     }
 
     public Lista caminoMasCorto(Object origen, Object destino) {
@@ -398,7 +400,7 @@ public class GrafoNoEtiq {
         Lista visitados = new Lista();
         NodoVert u = this.inicio;
         while (u != null) {
-            if (visitados.localizar(u.getElem()) < 0) {
+            if (visitados.localizar(u.getElem()) < 1) {
                 AnchuraDesde(u, visitados);
             }
             u = u.getSigVertice();
