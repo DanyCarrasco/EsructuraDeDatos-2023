@@ -267,6 +267,8 @@ public class GrafoNoEtiq {
     }
 
     public boolean existeCamino(Object origen, Object destino) {
+        /*Dados dos elementos de TipoVertice (origen y destino), devuelve verdadero si existe al menos
+        un camino que permite llegar del vértice origen al vértice destino y falso en caso contrario.*/
         boolean exito = false;
         //verifica si ambos vertices existen
         NodoVert auxO = null;
@@ -313,6 +315,10 @@ public class GrafoNoEtiq {
     }
 
     public Lista caminoMasCorto(Object origen, Object destino) {
+        /*Dados dos elementos de TipoVertice (origen y destino), devuelve un camino (lista de vértices)
+        que indique el camino que pasa por menos vértices que permite llegar del vértice origen al vértice
+        destino. Si hay más de un camino con igual cantidad de vértices, devuelve cualquiera de ellos. Si
+        alguno de los vértices no existe o no hay camino posible entre ellos devuelve la lista vacía.*/
         Lista salida = new Lista();
         boolean exito = false;
         //verifica si ambos vertices existen
@@ -356,6 +362,10 @@ public class GrafoNoEtiq {
     }
 
     public Lista caminoMasLargo(Object origen, Object destino) {
+        /*Dados dos elementos de TipoVertice (origen y destino), devuelve un camino (lista de vértices)
+        que indique el camino que pasa por más vértices (sin ciclos) que permite llegar del vértice origen
+        al vértice destino. Si hay más de un camino con igual cantidad de vértices, devuelve cualquiera de
+        ellos. Si alguno de los vértices no existe o no hay camino posible entre ellos devuelve la lista vacía.*/
         Lista salida = new Lista();
         boolean exito = false;
         //verifica si ambos vertices existen
