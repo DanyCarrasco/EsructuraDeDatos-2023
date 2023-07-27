@@ -48,11 +48,13 @@ public class Lista {
     private Nodo buscarNodo(int i, Nodo aux, int pos) {
         // metodo para buscar el nodo i-1 y que lo retorne
         // podria funcionar con this.cabecera ??
-        Nodo encontrado;
-        if (i == pos) {
-            encontrado = aux;
-        } else {
-            encontrado = buscarNodo(i + 1, aux.getEnlace(), pos);
+        Nodo encontrado = null;
+        if (aux != null) {
+            if (i == pos) {
+                encontrado = aux;
+            } else {
+                encontrado = buscarNodo(i + 1, aux.getEnlace(), pos);
+            }
         }
         return encontrado;
     }
@@ -138,6 +140,7 @@ public class Lista {
     public void vaciar() {
         //Quita todos los elementos de la lista
         this.cabecera = null;
+        this.longi = 0;
     }
 
     public boolean esVacia() {

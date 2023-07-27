@@ -145,7 +145,7 @@ public class GrafoNoEtiq {
 
     private boolean insertarArcoAux(NodoVert n, Object origen, Object destino) {
         //Modulo recursivo que busca hasta encontrar el nodo vertice origen en lista de vertices del grafo
-        //No es la mas eficiente porque busca de forma recursiva dos veces para buscar origen y destino
+        //No es el mas eficiente porque busca de forma recursiva dos veces para buscar origen y destino
         boolean exito = false;
         if (n != null) {
             if (n.getElem().equals(origen)) {
@@ -258,7 +258,7 @@ public class GrafoNoEtiq {
             NodoAdy ady = n.getPrimerAdy();
             while (ady != null) {
                 // visita en profundidad los adyacentes de n aun no visitados
-                if (vis.localizar(ady.getVertice().getElem()) < 0) {
+                if (vis.localizar(ady.getVertice().getElem()) < 1) {
                     listarEnProfundidadAux(ady.getVertice(), vis);
                 }
                 ady = ady.getSigAdyacente();
@@ -294,16 +294,18 @@ public class GrafoNoEtiq {
     private boolean existeCaminoAux(NodoVert n, Object dest, Lista vis) {
         boolean exito = false;
         if (n != null) {
-            exito = true;
-        } else {
-            //si no es el destino verifica si hay camino entre n y destino
-            vis.insertar(n.getElem(), vis.longitud() + 1);
-            NodoAdy ady = n.getPrimerAdy();
-            while (!exito && ady != null) {
-                if (vis.localizar(ady.getVertice().getElem()) < 0) {
-                    exito = existeCaminoAux(ady.getVertice(), dest, vis);
+            if (n.getElem().equals(dest)) {
+                exito = true;
+            } else {
+                //si no es el destino verifica si hay camino entre n y destino
+                vis.insertar(n.getElem(), vis.longitud() + 1);
+                NodoAdy ady = n.getPrimerAdy();
+                while (!exito && ady != null) {
+                    if (vis.localizar(ady.getVertice().getElem()) < 1) {
+                        exito = existeCaminoAux(ady.getVertice(), dest, vis);
+                    }
+                    ady = ady.getSigAdyacente();
                 }
-                ady = ady.getSigAdyacente();
             }
         }
         return exito;
@@ -336,29 +338,77 @@ public class GrafoNoEtiq {
         }
         if (auxO != null && auxD != null) {
             //si ambos vertices existen busca el camino mas corto entre ambos
-            caminoMasCortoAux(auxO, destino, salida);
+            salida = caminoMasCortoAux(auxO, destino, salida);
         }
         return salida;
     }
 
-    private void caminoMasCortoAux(NodoVert n, Object dest, Lista salida) {
+    private Lista caminoMasCortoAux(NodoVert n, Object dest, Lista salida) {
         //Busca el camino mas corto en la lista de adyacentes del nodo n hacia el vertice dest
         Lista visitados = new Lista();
         NodoAdy nAdyacente = n.getPrimerAdy();
         boolean exito = false;
         while (nAdyacente != null) {
-            exito = existeCaminoAux(n, dest, visitados);
+            visitados.insertar(n.getElem(), visitados.longitud() + 1);
+            exito = existeCaminoAux(nAdyacente.getVertice(), dest, visitados);
             if (exito) {
                 if (salida.longitud() == 0) {
-                    salida = visitados;
+                    salida = visitados.clone();
                 } else {
                     if (visitados.longitud() < salida.longitud()) {
-                        salida = visitados;
+                        salida = visitados.clone();
                     }
                 }
             }
             nAdyacente = nAdyacente.getSigAdyacente();
+            visitados.vaciar();
         }
+        return salida;
+    }
+
+    private Lista caminoMasCortoAux2(NodoVert n, Object dest, Lista salida) {
+        //Busca el camino mas corto en la lista de adyacentes del nodo n hacia el vertice dest
+        Lista visitados = new Lista();
+        NodoAdy nAdyacente = n.getPrimerAdy();
+        boolean exito = false;
+        while (nAdyacente != null) {
+            visitados.insertar(n.getElem(), visitados.longitud() + 1);
+            exito = existeCaminoAux(nAdyacente.getVertice(), dest, visitados);
+            if (exito) {
+                if (salida.longitud() == 0) {
+                    salida = visitados.clone();
+                } else {
+                    if (visitados.longitud() < salida.longitud()) {
+                        salida = visitados.clone();
+                    }
+                }
+            }
+            nAdyacente = nAdyacente.getSigAdyacente();
+            visitados.vaciar();
+        }
+        return salida;
+    }
+
+    private Lista caminoMasCortoAdy(NodoVert n, Object dest, Lista salida, Lista vis){
+        NodoAdy nAdyacente = n.getPrimerAdy();
+        if (n.getElem().equals(dest)) {
+            if (salida.longitud() == 0) {
+                salida = vis.clone();
+            } else {
+                if (vis.longitud() < salida.longitud()) {
+                    salida = vis.clone();
+                }
+            }
+        } else {
+            vis.insertar(n.getElem(), vis.longitud() + 1);
+            while (nAdyacente != null) {
+                if (vis.localizar(nAdyacente.getVertice().getElem()) < 1){
+                    salida = caminoMasLargoAdy(nAdyacente.getVertice(), dest, vis);
+                }
+                nAdyacente = nAdyacente.getSigAdyacente();
+            }
+        }
+        return salida;
     }
 
     public Lista caminoMasLargo(Object origen, Object destino) {
@@ -383,25 +433,45 @@ public class GrafoNoEtiq {
         }
         if (auxO != null && auxD != null) {
             //si ambos vertices existen busca el camino mas corto entre ambos
-            caminoMasLargoAux(auxO, destino, salida);
+            salida = caminoMasLargoAux(auxO, destino, salida);
         }
         return salida;
     }
 
-    private void caminoMasLargoAux(NodoVert n, Object dest, Lista salida) {
+    private Lista caminoMasLargoAux(NodoVert n, Object dest, Lista salida) {
         //Busca el camino mas largo en la lista de adyacentes del nodo n hacia el vertice dest
         Lista visitados = new Lista();
         NodoAdy nAdyacente = n.getPrimerAdy();
-        boolean exito = false;
         while (nAdyacente != null) {
-            exito = existeCaminoAux(n, dest, visitados);
-            if (exito) {
-                if (salida.longitud() < visitados.longitud()) {
-                    salida = visitados;
-                }
+            visitados.insertar(n.getElem(), visitados.longitud() + 1);
+            visitados = caminoMasLargoAdy(nAdyacente.getVertice(), dest, visitados);
+            if (salida.longitud() < visitados.longitud()) {
+                salida = visitados.clone();
             }
             nAdyacente = nAdyacente.getSigAdyacente();
+            visitados.vaciar();
         }
+        return salida;
+    }
+
+    private Lista caminoMasLargoAdy(NodoVert n, Object dest, Lista vis) {
+        //Busca el camino mas largo en la lista de adyacentes del nodo n hacia el vertice dest
+        Lista salida = new Lista();
+        NodoAdy nAdyacente = n.getPrimerAdy();
+        if (n.getElem().equals(dest)) {
+            if (salida.longitud() < vis.longitud()) {
+                salida = vis.clone();
+            }
+        } else {
+            vis.insertar(n.getElem(), vis.longitud() + 1);
+            while (nAdyacente != null) {
+                if (vis.localizar(nAdyacente.getVertice().getElem()) < 1){
+                    salida = caminoMasLargoAdy(nAdyacente.getVertice(), dest, vis);
+                }
+                nAdyacente = nAdyacente.getSigAdyacente();
+            }
+        }
+        return salida;
     }
 
     public Lista listarEnAnchura() {
@@ -411,14 +481,14 @@ public class GrafoNoEtiq {
         NodoVert u = this.inicio;
         while (u != null) {
             if (visitados.localizar(u.getElem()) < 1) {
-                AnchuraDesde(u, visitados);
+                anchuraDesde(u, visitados);
             }
             u = u.getSigVertice();
         }
         return visitados;
     }
 
-    private void AnchuraDesde(NodoVert v, Lista visitados) {
+    private void anchuraDesde(NodoVert v, Lista visitados) {
         Cola q = new Cola();
         visitados.insertar(v, visitados.longitud() + 1);
         q.poner(v);
@@ -465,9 +535,9 @@ public class GrafoNoEtiq {
     private NodoAdy cloneAdyAux(NodoVert nOrigen, NodoAdy nAdy, NodoVert clonInicio) {
         //Clona cada adyacente del grafo original en el grafo clon
         NodoAdy nuevo = null;
-        if (nOrigen != null) {
+        if (nAdy != null) {
             NodoVert aux = clonInicio;
-            while (nAdy.getVertice().getElem().equals(aux.getElem())&& aux != null) {
+            while (!(nAdy.getVertice().getElem().equals(aux.getElem())) && aux != null) {
                 aux = aux.getSigVertice();
             }
             if (aux != null) {

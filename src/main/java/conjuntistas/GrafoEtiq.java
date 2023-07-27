@@ -145,7 +145,7 @@ public class GrafoEtiq {
 
     private boolean insertarArcoAux(NodoVertEtiq n, Object origen, Object destino, Object etiqueta) {
         //Modulo recursivo que busca hasta encontrar el nodo vertice origen en lista de vertices del grafo
-        //No es la mas eficiente porque busca de forma recursiva dos veces para buscar origen y destino
+        //No es el mas eficiente porque busca de forma recursiva dos veces para buscar origen y destino
         boolean exito = false;
         if (n != null) {
             if (n.getElem().equals(origen)) {
@@ -242,7 +242,7 @@ public class GrafoEtiq {
         //define un vertice donde comenzar a recorrer
         NodoVertEtiq aux = this.inicio;
         while (aux != null) {
-            if (visitados.localizar(aux.getElem()) < 0) {
+            if (visitados.localizar(aux.getElem()) < 1) {
                 //si el vertice no fue visitados aun, avanza en profundidad
                 listarEnProfundidadAux(aux, visitados);
             }
@@ -300,7 +300,7 @@ public class GrafoEtiq {
             vis.insertar(n.getElem(), vis.longitud() + 1);
             NodoAdyEtiq ady = n.getPrimerAdy();
             while (!exito && ady != null) {
-                if (vis.localizar(ady.getVertice().getElem()) < 0) {
+                if (vis.localizar(ady.getVertice().getElem()) < 1) {
                     exito = existeCaminoAux(ady.getVertice(), dest, vis);
                 }
                 ady = ady.getSigAdyacente();
