@@ -107,6 +107,7 @@ public class ArbolAVL {
                     n.getIzquierdo().getIzquierdo().recalcularAltura();
                     n = rotarDerecha(n);
                     n.getDerecho().recalcularAltura();
+                    n.recalcularAltura();
                 }
             } else {
                 if (balance == -2){
@@ -120,6 +121,7 @@ public class ArbolAVL {
                         n.getDerecho().getDerecho().recalcularAltura();
                         n = rotarIzquierda(n);
                         n.getIzquierdo().recalcularAltura();
+                        n.recalcularAltura();
                     }
                 }
             }
