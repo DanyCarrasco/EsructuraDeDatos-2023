@@ -480,7 +480,7 @@ public class GrafoNoEtiq {
         Lista visitados = new Lista();
         NodoVert u = this.inicio;
         while (u != null) {
-            if (visitados.localizar(u.getElem()) < 1) {
+            if (visitados.localizar(u) < 1) {
                 anchuraDesde(u, visitados);
             }
             u = u.getSigVertice();

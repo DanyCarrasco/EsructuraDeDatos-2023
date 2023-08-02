@@ -1,6 +1,8 @@
 package tests.conjuntistas;
 
 import conjuntistas.GrafoNoEtiq;
+import conjuntistas.NodoVert;
+import lineales.dinamicas.Lista;
 
 public class testGrafoNoEtiq {
     public static void main(String[] args) {
@@ -9,9 +11,9 @@ public class testGrafoNoEtiq {
         //testExisteArco();
         //testExisteCamino();
         //testCaminoMasCorto();
-        testCaminoMasLargo();
+        //testCaminoMasLargo();
         //testListarEnProfundidad();
-        //testListarEnAnchura();
+        testListarEnAnchura();
         //testEsVacio();
         //testClone();
     }
@@ -181,8 +183,8 @@ public class testGrafoNoEtiq {
         System.out.println("Inserto E en el grafo");
         g6.insertarVertice("E");
         System.out.println("Inserto arcos de E");
-        g6.insertarArco("E","D");
-        g6.insertarArco("C","E");
+        g6.insertarArco("E", "D");
+        g6.insertarArco("C", "E");
         System.out.println("Grafo g6: \n" + g6.toString());
         System.out.println("Pruebo en grafo con vertices camino largo de 'A' a 'C': " + g6.caminoMasLargo("A", "C").toString());
     }
@@ -205,6 +207,7 @@ public class testGrafoNoEtiq {
         g7.insertarArco("A", "D");
         g7.insertarArco("B", "C");
         g7.insertarArco("B", "D");
+        System.out.println("Se insertaron los arcos");
         System.out.println("Grafo g7: \n" + g7.toString());
         System.out.println("Se enlista grafo g7: " + g7.listarEnProfundidad().toString());
     }
@@ -213,23 +216,34 @@ public class testGrafoNoEtiq {
         System.out.println("Prueba de listar en anchura:");
         GrafoNoEtiq g8 = new GrafoNoEtiq();
         System.out.println("Grafo g8: \n" + g8.toString());
-        System.out.println("Se enlista en un grafo vacio (retorna lista vacia): " + g8.listarEnProfundidad().esVacia());
+        System.out.println("Se enlista en un grafo vacio (retorna lista vacia): " + g8.listarEnAnchura().esVacia());
         System.out.println("Se ingresa elemento A en el grafo");
         g8.insertarVertice("A");
         System.out.println("Grafo g8: \n" + g8.toString());
-        System.out.println("Se enlista grafo g8: " + g8.listarEnProfundidad().toString());
+        System.out.println("Se enlista grafo g8: ");
+        mostrarLista(g8.listarEnAnchura());
         g8.insertarVertice("B");
         g8.insertarVertice("C");
         g8.insertarVertice("D");
         System.out.println("Se insertaron los vertices");
-        System.out.println("Se enlista grafo g8: " + g8.listarEnProfundidad().toString());
+        System.out.println("Se enlista grafo g8: ");
+        mostrarLista(g8.listarEnAnchura());
         g8.insertarArco("A", "B");
         g8.insertarArco("A", "D");
         g8.insertarArco("B", "C");
         g8.insertarArco("B", "D");
         System.out.println("Se insertaron los arcos");
         System.out.println("Grafo g8: \n" + g8.toString());
-        System.out.println("Se enlista grafo g8: " + g8.listarEnProfundidad().toString());
+        System.out.println("Se enlista grafo g8: ");
+        mostrarLista(g8.listarEnAnchura());
+    }
+
+    private static void mostrarLista(Lista lis) {
+        int largo = lis.longitud();
+        for (int i = 1; i <= largo; i++) {
+            NodoVert nodo = (NodoVert) lis.recuperar(i);
+            System.out.println(nodo.getElem().toString());
+        }
     }
 
     public static void testEsVacio() {
@@ -271,8 +285,8 @@ public class testGrafoNoEtiq {
         GrafoNoEtiq g13 = g10.clone();
         System.out.println("Grafo g10: \n" + g10.toString());
         System.out.println("Grafo clone con arcos: \n" + g13.toString());
-        System.out.println("Se agrega un vertice en ultimo grafo clonado: "+ g13.insertarVertice("G"));
-        System.out.println("Se agrega un arco en el ultimo grafo clonado: "+ g13.insertarArco("C", "G"));
+        System.out.println("Se agrega un vertice en ultimo grafo clonado: " + g13.insertarVertice("G"));
+        System.out.println("Se agrega un arco en el ultimo grafo clonado: " + g13.insertarArco("C", "G"));
         System.out.println("Grafo g10: \n" + g10.toString());
         System.out.println("Ultimo grafo clonado: \n" + g13.toString());
     }
